@@ -117,7 +117,7 @@ class NamuCrawler():
         self.chrome_options.page_load_strategy = 'eager'
 
         # self.driver = webdriver.Chrome(options=self.chrome_options)
-        selenium_grid_url = "http://namu-selenium-standalone.namu-wiki.svc.cluster.local:4444"
+        selenium_grid_url = "http://namu-selenium-grid-selenium-hub.namu-wiki.svc.cluster.local:4444/wd/hub"
         self.driver = webdriver.Remote(
             command_executor=selenium_grid_url,
             options=self.chrome_options
