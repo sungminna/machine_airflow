@@ -112,13 +112,17 @@ class NamuCrawler():
         self.chrome_options.add_argument('--disable-extensions')
         self.chrome_options.add_argument('--disable-infobars')
         self.chrome_options.add_argument('--disable-notifications')
-        self.chrome_options.binary_location = "/usr/bin/google-chrome"  # Add this line
 
         self.chrome_options.add_argument('--ignore-certificate-errors')
         self.chrome_options.page_load_strategy = 'eager'
 
         # self.driver = webdriver.Chrome(options=self.chrome_options)
-        self.driver = webdriver.Chrome(service=Service('/usr/local/bin/chromedriver'), options=self.chrome_options)
+        selenium_grid_url = "http://namu-selenium-standalone.namu-wiki.svc.cluster.local:4444"
+        self.driver = webdriver.Remote(
+            command_executor=selenium_grid_url,
+            options=self.chrome_options
+        )
+
         self.driver.set_page_load_timeout(7)
         self.wait = WebDriverWait(self.driver, 7)
 
