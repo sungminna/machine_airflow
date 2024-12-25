@@ -20,7 +20,7 @@ class RabbitManager:
         #     pika.ConnectionParameters(host='localhost')
         # )
         self.connection = pika.BlockingConnection(
-            pika.ConnectionParameters(host='namu-rabbitmq')
+            pika.ConnectionParameters(host='rabbitmq')
         )
         self.channel = self.connection.channel()
         self.channel.queue_declare(queue='task_queue', durable=True)
@@ -79,7 +79,7 @@ class MongoDBManager:
     def __init__(self):
         # self.client = MongoClient('mongodb://localhost:27017/')
         self.client = MongoClient(
-            'mongodb://namu-mongodb:27017/namuwiki'
+            'mongodb://namu:namu@mongodb:27017/'
         )
         self.db = self.client['namu_wiki']
         self.collection = self.db['articles']
@@ -112,26 +112,22 @@ class NamuCrawler():
         self.chrome_options.add_argument('--disable-extensions')
         self.chrome_options.add_argument('--disable-infobars')
         self.chrome_options.add_argument('--disable-notifications')
-
         self.chrome_options.add_argument('--ignore-certificate-errors')
         self.chrome_options.page_load_strategy = 'eager'
 
+        self.chrome_options.add_argument(f'--user-agent=Googlebot')
+        self.chrome_options.add_argument(f'--header=From: googlebot(at)googlebot.com')
+        self.chrome_options.add_argument(f'--header=X-Forwarded-For: 66.249.66.1')
+
         # self.driver = webdriver.Chrome(options=self.chrome_options)
-        selenium_url = "http://selenium.namu-wiki.svc.cluster.local:4444/wd/hub"
         self.driver = webdriver.Remote(
-            command_executor=selenium_url,
+            command_executor='http://selenium:4444/wd/hub',  # docker-compose의 service 이름
             options=self.chrome_options
         )
 
         self.driver.set_page_load_timeout(7)
         self.wait = WebDriverWait(self.driver, 7)
 
-        self.driver.execute_cdp_cmd('Network.setExtraHTTPHeaders', {
-            'headers': {
-                'X-Forwarded-For': '66.249.66.1',
-                'From': 'googlebot(at)googlebot.com'
-            }
-        })
         self.class_name = class_name
         self.attr_name = attr_name
 
