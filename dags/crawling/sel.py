@@ -252,10 +252,9 @@ class NamuCrawler():
                 name = attr_name
                 break
 
-        xpath_template = '//div[@{}]'
-        xpath = xpath_template.format(name)
+        css_selector = f"div[{name}]"
         element = self.wait.until(
-            EC.presence_of_element_located((By.XPATH, xpath))
+            EC.presence_of_element_located((By.CSS_SELECTOR, css_selector))
         )
         attributes = element.get_property('attributes')
         parent_class_name = element.get_attribute("class")
